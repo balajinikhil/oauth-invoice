@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <%- include ('./SharedViews/Header.ejs') %>
+</head>
+<body>
+    <div class="ui container">
+
+        <div class="ui segment" style="margin-top: 1.56rem;">
+            <h1 class="main_heading">Billing And Invoice</h1>
+            <a href="/logout" class="ui negative button login-btn">Logout</a>
+        </div>
+
+        <div class="ui segment">
+            <h3>Welcome <%= user.username %></h3>
+            <h5>Invoice Generator</h5>
+
+            <form class="ui form" id="invoice" autocomplete="off">
+
+                <div class="fields">
+                    <div class="field">
+                        <label>Logo</label>
+                        <input type="text" name="logo" value="https://www.easyinvoice.cloud/img/logo.png" >
+                    </div>
+                </div>
+                <div class="fields">
+                    <div class="field">
+                        <label>Sender Name</label>
+                        <input type="text" name="sender-name" value="<%= user.username %>" placeholder="Sender Name" />
+                    </div>
+                    <div class="field">
+                        <label>Sender Address</label>
+                        <input type="text" name="sender-address"  placeholder="Address" />
+                    </div>
+                    <div class="field">
+                        <label>Zip</label>
+                        <input type="text" name="sender-zip" placeholder="Zip" />
+                    </div>
+                    <div class="field">
+                        <label >City</label>
+                        <input type="text" name="sender-city" placeholder="City">
+                    </div>
+                    <div class="field">
+                        <label>Country</label>
+                        <input type="text" name="sender-country" placeholder="Country" />
+                    </div>
+                </div>
+                
+                <div class="fields">
+                  <div class="field">
+                    <label>Customer Name</label>
+                    <input type="text" name="customer-name" placeholder="Customer Name" />
+                  </div>
+                  <div class="field">
+                    <label>Customer Address</label>
+                    <input type="text" name="customer-address" placeholder="Customer Email" />
+                  </div>
+                  
+                <div class="field">
+                    <label>Zip</label>
+                    <input type="text" name="customer-zip" placeholder="Zip" />
+                </div>
+                <div class="field">
+                    <label >City</label>
+                    <input type="text" name="customer-city" placeholder="City">
+                </div>
+                <div class="field">
+                    <label>Country</label>
+                    <input type="text" name="customer-country" placeholder="Country" />
+                </div>
+                </div>
+                <div class="fields">
+                    <div class="field">
+                      <label>Invoice Number</label>
+                      <input type="text" name="invoice-number" placeholder="Invoice Number" />
+                    </div>
+                    <div class="field">
+                      <label>Invoice Date</label>
+                      <input type="date" name="invoice-date" placeholder="Customer Email" />
+                    </div>
+                </div>
+
+                <div class="fields">
+                    <table class="ui celled table" id="items">
+                        <thead>
+                            <tr>
+                                <th>Sl</th>
+                                <th>Product</th>
+                                <th>Amount</th>
+                                <th>Tax</th>
+                                <th>Quantity</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr id="t-0">
+                                <td>1</td>
+                                <td><input type="text" name="product" class="p-0"/></td>
+                                <td><input type="text" name="amount"  class="a-0"/></td>
+                                <td><input type="text" name="tax" class="t-0" /></td>
+                                <td><input type="text" name="quantity" class="q-0" /></td>
+                                <td onclick="deleteRow('t-0')">
+                                    <i class="times circle icon"></i>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                 
+                <div class="fields">
+                    <div class="field">
+                        <button type="button" class="ui positive icon button" id="add-row">
+                          <i class="plus icon"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="fields">
+                    <div class="field">
+                        <input type="submit" class="ui primary button" value="Download Invoice" />
+                    </div>
+                </div>
+
+            </form>
+              
+
+        </div>
+    </div>
+
+    <%- include('./SharedViews/scripts.ejs') %>
+
+    <script>
+        // let form = document.getElementById('invoice');
+        // form.addEventListener('submit', (e)=>{
+        //     e.preventDefault();
+        // })
+
+        let count = 0;
+        $("#add-row").click((e)=>{
+            count++;
+            let newRow = `
+                            <tr id="t-${count}">
+                                <td>${count + 1}</td>
+                                <td><input type="text" name="product" class="p-${count}" /></td>
+                                <td><input type="text" name="amount" class="a-${count}"  /></td>
+                                <td><input type="text" name="tax" class="t-${count}" /></td>
+                                <td><input type="text" name="quantity" class="q-${count}" /></td>
+                                <td onclick="deleteRow('t-${count}')">
+                                    <i class="times circle icon"></i>
+                                </td>
+                            </tr>
+            `;
+            $('#items').append(newRow);
+
+        })
+
+        function deleteRow(val){
+            let element = document.getElementById(val);
+            element.remove();
+        }
+
+        const productsArray = ()=>{
+            let length = $('input[name="product"]').length
+            let arr = [];
+            for(let i=0; i<length; i++){
+                console.log($(`.p-${i}`).val());
+                let obj = {
+                    description:$(`.p-${i}`).val(),
+                    quantity:$(`.q-${i}`).val(),
+                    tax:$(`.t-${i}`).val(),
+                    price:$(`.a-${i}`).val()
+                }
+                arr.push(obj);
+            }
+            return arr;
+        }
+
+        $(document).ready(()=>{
+
+            $('#invoice').validate({
+                rules:{
+                    "sender-name":{
+                        required:true
+                    },
+                    "sender-address":{
+                        required:true
+                    },
+                    "customer-name":{
+                        required:true
+                    },
+                    "customer-address":{
+                        required:true
+                    },
+                    "invoice-number":{
+                        required:true
+                    },
+                    "invoice-date":{
+                        required:true
+                    },
+                    "product":{
+                        required:true
+                    },
+                    "amount":{
+                        required:true,
+                        digits:true
+                    },
+                    "tax":{
+                        required:true,
+                        digits:true
+                    },
+                    "quantity":{
+                        required:true,
+                        digits:true
+                    },
+                    "sender-zip":{
+                        required:true,
+                        digits:true
+                    },
+                    "sender-city":{
+                        required:true,
+                    },
+                    "sender-country":{
+                        required:true
+                    },
+                    "customer-zip":{
+                        required:true,
+                        digits:true
+                    },
+                    "customer-city":{
+                        required:true,
+                    },
+                    "customer-country":{
+                        required:true
+                    }
+                },
+                messages:{
+                    "sender-name":{
+                        required:"Enter Sender Name"
+                    },
+                    "sender-address":{
+                        required:"Enter Sender Address"
+                    },
+                    "customer-name":{
+                        required:"Enter Customer Name"
+                    },
+                    "customer-address":{
+                        required:"Enter Customer Email"
+                    },
+                    "invoice-number":{
+                        required:"Enter Invoice Number"
+                    },
+                    "invoice-date":{
+                        required:"Enter Invoice Date"
+                    },
+                    "product":{
+                        required:"Enter Product"
+                    },
+                    "amount":{
+                        required:"Enter Amount",
+                    },
+                    "tax":{
+                        required:"Enter Tax",
+                    },
+                    "quantity":{
+                        required:"Enter Quantity",
+                    },
+                    "sender-zip":{
+                        required:"Enter Zip",
+                    },
+                    "sender-city":{
+                        required:"Enter City",
+                    },
+                    "sender-country":{
+                        required:"Enter Country"
+                    },
+                    "customer-zip":{
+                        required:"Enter Zip",
+                    },
+                    "customer-city":{
+                        required:"Enter City",
+                    },
+                    "customer-country":{
+                        required:"Enter Country"
+                    }
+                },
+                submitHandler:function(e){
+                     console.log(productsArray());
+                    axios({
+                        method:'post',
+                        url:'/generate-invoice',
+                        data:{
+                            logo:$('input[name="logo"]').val(),
+                            sender:{
+                                company:$('input[name="sender-name"]').val(),
+                                address:$('input[name="sender-address"]').val(),
+                                zip:$('input[name="sender-zip"]').val(),
+                                city:$('input[name="sender-city"]').val(),
+                                country:$('input[name="sender-country"]').val(),
+                            },
+                            client:{
+                                company:$('input[name="customer-name"]').val(),
+                                address:$('input[name="customer-address"]').val(),
+                                zip:$('input[name="customer-zip"]').val(),
+                                city:$('input[name="customer-city"]').val(),
+                                country:$('input[name="customer-country"').val()
+                            },
+                            invoiceNumber:$('input[name="invoice-number"]').val(),
+                            invoiceDate:$('input[name="invoice-date"]').val(),
+                            products:productsArray()
+                        }
+                    }).then((res)=>{                        
+                        window.location.href = res.data.redirect;
+                    }).catch(err=>{
+                        console.log(err);
+                        alert('Something went wrong try again')
+                    })
+                }
+            })
+
+        })
+    </script>
+</body>
+</html>

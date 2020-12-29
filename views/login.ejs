@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('./SharedViews/Header.ejs') %>
+</head>
+<body>
+    
+   <div class="ui container">
+        <form class="ui placeholder segment" id="center">
+            <div class="ui two column very relaxed stackable grid">
+            <div class="column">
+                <div class="ui form">
+                <div class="field">
+                    <label>Username</label>
+                    <div class="ui left icon input">
+                    <input type="text" placeholder="Username" name="username"  />
+                    <i class="user icon"></i>
+                    </div>
+                </div>
+                <div class="field">
+                    <label>Password</label>
+                    <div class="ui left icon input">
+                    <input type="password"  name="password" />
+                    <i class="lock icon"></i>
+                    </div>
+                </div>
+
+                <div class="ui red message" id="err" style="display: none;">Incorrect email or password</div>
+
+
+                <input type="submit" class="ui blue submit button"  value="Login" />
+                </div>
+
+               
+
+            </div>
+            <div class="middle aligned column">
+                <a href="/google-login" class="ui google plus button">
+                <i class="google icon"></i>
+                    Google
+                </a>
+            </div>
+            </div>
+            <div class="ui vertical divider">
+            Or
+            </div>
+        </form>
+    </div>
+
+   <%- include('./SharedViews/scripts.ejs') %>
+
+    <script>
+        $(document).ready(()=>{
+
+            $('#center').validate({
+                rules:{
+                    "username":{
+                        required:true
+                    },
+                    "password":{
+                        required:true,
+                        min:4
+                    }
+                },
+                messages:{
+                    "username":{
+                        required:'Enter Username'
+                    },
+                    "password":{
+                        required:'Enter Password'
+                    }
+                },
+                submitHandler:function(){
+                    console.log('submit');
+
+                    axios({
+                        method:'post',
+                        url:'/login',
+                        data:{
+                            username:$('input[name="username"').val(),
+                            password:$('input[name="password"').val()
+                        }
+                    }).then((res)=>{
+                        console.log(res.data);
+
+                        window.location.href = res.data.redirect
+
+                    }).catch(err=>{
+                        console.log(err.message);
+
+                        setTimeout(()=>{
+                            $('#err').hide(1000);
+                        },3000)
+                        $('#err').show(1000);
+
+                    })
+
+                }    
+                
+            })
+
+        })
+
+    </script>
+</body>
+</html>
