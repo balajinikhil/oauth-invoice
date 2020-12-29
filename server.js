@@ -8,10 +8,9 @@ dotenv.config({
     path:'./config.env'
 });
 
-console.log(process.env.DB);
 
 const mongoose = require('mongoose');
-const DB = process.env.DB;
+const DB = process.env.MONGODB_URI;
 
 mongoose.connect(DB, {
     useCreateIndex: true,
