@@ -8,6 +8,8 @@ dotenv.config({
     path:'./config.env'
 });
 
+console.log(process.env.DB);
+
 const mongoose = require('mongoose');
 const DB = process.env.DB;
 
@@ -31,4 +33,4 @@ process.on('unhandledRejection', (err)=>{
     server.close(()=>{
         process.exit(3);
     })
-})
+}) 
