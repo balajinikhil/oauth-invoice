@@ -71,7 +71,6 @@
                     }
                 },
                 submitHandler:function(){
-                    console.log('submit');
 
                     axios({
                         method:'post',
@@ -81,12 +80,8 @@
                             password:$('input[name="password"').val()
                         }
                     }).then((res)=>{
-                        console.log(res.data);
-
                         window.location.href = res.data.redirect
-
                     }).catch(err=>{
-                        console.log(err.message);
 
                         setTimeout(()=>{
                             $('#err').hide(1000);

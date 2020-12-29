@@ -19,7 +19,6 @@ router.post('/login', passport.authenticate('local', {failureRedirect:'/error'})
 
 router.get('/error', LoginErrorHandle);
 router.get('/login',    loginPage);
-router.post('/sign-up', addNewUser);
 
 router.get('/google-login', passport.authenticate('google', 
 {scope:['profile']}
@@ -30,11 +29,11 @@ router.get('/auth/google/redirect', passport.authenticate('google', {
     failureRedirect:'/login'
 }));
 
-
+router.post('/sign-up', authMiddelware, addNewUser);
 router.get('/profile', authMiddelware, profilePage);
+router.post('/generate-invoice',authMiddelware, generateInvoice);
 
 router.get('/logout',   logout);
-router.post('/generate-invoice', generateInvoice);
 
 
 module.exports = router;

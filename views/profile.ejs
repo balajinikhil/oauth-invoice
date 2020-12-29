@@ -122,19 +122,17 @@
                 </div>
 
             </form>
-              
+        </div>
 
+        <div class="ui active dimmer" id="loading" style="display: none;">
+            <div class="ui indeterminate text loader">Preparing Files</div>
         </div>
     </div>
 
     <%- include('./SharedViews/scripts.ejs') %>
 
     <script>
-        // let form = document.getElementById('invoice');
-        // form.addEventListener('submit', (e)=>{
-        //     e.preventDefault();
-        // })
-
+    
         let count = 0;
         $("#add-row").click((e)=>{
             count++;
@@ -163,7 +161,6 @@
             let length = $('input[name="product"]').length
             let arr = [];
             for(let i=0; i<length; i++){
-                console.log($(`.p-${i}`).val());
                 let obj = {
                     description:$(`.p-${i}`).val(),
                     quantity:$(`.q-${i}`).val(),
@@ -284,7 +281,9 @@
                     }
                 },
                 submitHandler:function(e){
-                     console.log(productsArray());
+
+                    $('#loading').show();
+
                     axios({
                         method:'post',
                         url:'/generate-invoice',
@@ -308,10 +307,11 @@
                             invoiceDate:$('input[name="invoice-date"]').val(),
                             products:productsArray()
                         }
-                    }).then((res)=>{                        
+                    }).then((res)=>{                      
+                        $('#loading').hide();  
                         window.location.href = res.data.redirect;
                     }).catch(err=>{
-                        console.log(err);
+                        $('#loading').hide();
                         alert('Something went wrong try again')
                     })
                 }
